@@ -3,10 +3,11 @@ from openai import OpenAI
 import base64
 import shutil
 
+import constants
 from gpt_client import ChatGptClient
 
-_OPEN_AI_API_KEY = ''
-_OPEN_AI_MODEL = 'gpt-4o-audio-preview'
+_OPEN_AI_API_KEY = constants.OPENAI_KEY
+_OPEN_AI_MODEL = constants.OPENAI_MODEL
 client = OpenAI(api_key=_OPEN_AI_API_KEY)
 chatgpt_client = ChatGptClient(client=client, model=_OPEN_AI_MODEL)
 turn_number, response_id_list, input_encodings = 0, [], []
@@ -44,6 +45,10 @@ def get_conversation_context():
         
     return messages    
         
+def clear_history():
+    global turn_number, response_id_list
+    turn_number = 0
+    response_id_list = []
 
 def get_voice(audio_file):
     print(audio_file)
@@ -66,11 +71,16 @@ def get_voice(audio_file):
     return wav_bytes
     
 
-demo = gr.Interface(
-    fn=get_voice,
-    inputs=gr.Audio(sources="microphone", type="filepath", format="wav"),
-    outputs=gr.Audio(),
-    title="Ask your query",
-)
+demo = gr.Blocks()
+with demo:
+    voice_input = gr.Interface(
+        fn=get_voice,
+        inputs=gr.Audio(sources="microphone", type="filepath", format="wav"),
+        outputs=gr.Audio(),
+        title="Ask your query",
+    )
+
+    btn = gr.Button(value="Start new conversation")
+    btn.click(clear_history)
 
 demo.launch()

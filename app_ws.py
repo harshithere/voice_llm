@@ -3,10 +3,12 @@ import json
 import websocket
 import gradio as gr
 
+import constants
 from app import get_voice
 
 url = "wss://api.openai.com/v1/realtime?model=gpt-4o-realtime-preview-2024-12-17"
-_OPEN_AI_API_KEY = ''
+_OPEN_AI_API_KEY = constants.OPENAI_KEY
+_OPEN_AI_MODEL = constants.OPENAI_MODEL
 
 headers = [
     "Authorization: Bearer " + _OPEN_AI_API_KEY,
